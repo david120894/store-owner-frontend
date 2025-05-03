@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:store_flutter/presentation/auth/login_controller.dart';
 
 class LoginScreens extends StatefulWidget {
-  const LoginScreens({super.key});
+  final LoginController loginController;
+
+  const LoginScreens({super.key, required this.loginController});
+
   @override
   State<LoginScreens> createState() => _LoginScreensState();
 }
@@ -10,7 +14,7 @@ class _LoginScreensState extends State<LoginScreens> {
   final TextEditingController _username = TextEditingController();
   final TextEditingController _password = TextEditingController();
 
-  _login() {
+  void _login() async {
     final username = _username.text;
     final password = _password.text;
 
@@ -23,35 +27,39 @@ class _LoginScreensState extends State<LoginScreens> {
       );
       return;
     }
-    if (username == 'admin' && password == 'admin') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Ingreso exitosamente'),
-          backgroundColor: Colors.black,
-        ),
-      );
-      showDialog(
-        context: context,
-        barrierDismissible:
-            false, 
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Row(
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(width: 15),
-                Text("Cargando..."),
-              ],
-            ),
-          );
-        },
-      );
-      Future.delayed(Duration(seconds: 2), () {
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 15),
+              Text("Cargando..."),
+            ],
+          ),
+        );
+      },
+    );
+
+    try {
+      final result = await widget.loginController.login(username, password);
+      print("alfin" + result);
+      Navigator.pop(context); // Cierra el diálogo de carga
+
+      if (result.success) {
         Navigator.pushReplacementNamed(context, '/home');
-      });
-    } else {
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(result.message)));
+      }
+    } catch (e) {
+      Navigator.pop(context); // Cierra el diálogo de carga si hay error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Usuario o Contraseña incorrectas')),
+        SnackBar(content: Text('Error de conexión o credenciales inválidas')),
       );
     }
   }

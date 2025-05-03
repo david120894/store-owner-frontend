@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:store_flutter/application/usecases/login_usecases.dart';
+import 'package:store_flutter/data/datasources/auth_remote_data_source.dart';
+import 'package:store_flutter/infrastructure/repositories/auth_repository_impl.dart';
+import 'package:store_flutter/presentation/auth/login_controller.dart';
 import 'package:store_flutter/presentations/home_screens.dart';
 import 'package:store_flutter/presentations/login_screens.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
-  runApp(const MyApp());
+  final client = http.Client();
+  final authRemoteDataSource = AuthRemoteDataSource(client);
+  final authRepository = AuthRepositoryImpl(authRemoteDataSource);
+  final loginUsecase = LoginUsecase(authRepository);
+  final loginController = LoginController(loginUsecase);
+
+  runApp(MyApp(loginController: loginController));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final LoginController loginController;
 
-  // This widget is the root of your application.
+  const MyApp({super.key, required this.loginController});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,9 +32,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => LoginScreens(),
-        '/home':(context)=> HomeScreens()},
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+        '/': (context) => LoginScreens(loginController: loginController),
+        '/home': (context) => HomeScreens(),
+      },
     );
   }
 }
