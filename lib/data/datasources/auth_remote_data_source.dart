@@ -10,11 +10,8 @@ class AuthRemoteDataSource {
     String username,
     String password,
   ) async {
-    print("casi lleque username" + username);
-    print("casi llegue password" + password);
     final response = await client.post(
-      // Uri.parse('http://localhost:8081/api/v1/login'),
-      Uri.parse('http://192.168.1.119:8081/api/v1/login'),
+      Uri.parse('http://10.0.2.2:8081/api/login'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -25,8 +22,6 @@ class AuthRemoteDataSource {
     );
     if (response.statusCode == 200) {
       final jsonMap = jsonDecode(response.body);
-      print(jsonMap);
-      print(response);
       return ApiResponse<UserModels>.fromJson(
         jsonMap,
         (data) => UserModels.fromJson(data),

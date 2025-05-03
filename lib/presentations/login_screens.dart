@@ -46,7 +46,7 @@ class _LoginScreensState extends State<LoginScreens> {
 
     try {
       final result = await widget.loginController.login(username, password);
-      print("alfin" + result);
+      print('Usuario: ${result.data.username}');
       Navigator.pop(context); // Cierra el diálogo de carga
 
       if (result.success) {

@@ -7,7 +7,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   AuthRepositoryImpl(this.remoteDataSource);
   @override
-  Future<ApiResponse<UserModels>> login(String email, String password) async {
+  Future<ApiResponse<UserModels>> login(String email, String password) {
     return remoteDataSource.login(email, password);
   }
 }

@@ -6,6 +6,8 @@ class LoginController {
   Future login(String username, String password) async {
     print("llegue" + username);
     final response = await loginUsecase.login(username, password);
+    print("llegue" + response.data.person.address);
+
     if (response.success) {
       print("uno mas" + response.data.person.firstName);
 
